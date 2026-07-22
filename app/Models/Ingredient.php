@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Ingredient extends Model
+{
+    protected $fillable = [
+        'filemaker_id', 'name', 'unit', 'package_quantity', 'unit_cost',
+        'cost_date', 'notes', 'available_for_bar',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'package_quantity' => 'decimal:3',
+            'unit_cost' => 'decimal:4',
+            'cost_date' => 'date',
+            'available_for_bar' => 'boolean',
+        ];
+    }
+
+    /** @return HasMany<RecipeStepIngredient, $this> */
+    public function recipeStepIngredients(): HasMany
+    {
+        return $this->hasMany(RecipeStepIngredient::class);
+    }
+}
