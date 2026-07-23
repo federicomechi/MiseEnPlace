@@ -28,9 +28,38 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
+import { useSidebar } from '@/components/ui/sidebar/utils';
+
+type BackendMenuItem = {
+    title: string;
+    href: string | null;
+    icon: string | null;
+    children?: BackendMenuItem[];
+};
 
 const page = usePage();
 const role = computed(() => page.props.auth.user?.role ?? 'open');
+const { setOpen } = useSidebar();
+
+const iconMap: Record<string, NavItem['icon']> = {
+    book: BookOpen,
+    clipboard: ClipboardList,
+    cooking: CookingPot,
+    glass: GlassWater,
+    salad: Salad,
+    settings: SlidersHorizontal,
+    store: Store,
+    grid: LayoutGrid,
+};
+
+function mapMenuItem(item: BackendMenuItem): NavItem {
+    return {
+        title: item.title,
+        href: item.href ?? '#',
+        icon: item.icon ? iconMap[item.icon] : undefined,
+        children: item.children?.map(mapMenuItem),
+    };
+}
 
 const roleLabels: Record<string, string> = {
     full_access: 'Accesso completo',
@@ -100,13 +129,21 @@ const workspaceItems: Record<string, NavItem[]> = {
 
 workspaceItems.eart_admin = workspaceItems.full_access;
 
-const mainNavItems = computed<NavItem[]>(() => [
-    { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
-    ...(workspaceItems[role.value] ?? workspaceItems.open),
-    ...(role.value === 'full_access' || role.value === 'eart_admin'
-        ? [{ title: 'Amministrazione', href: '/admin', icon: Settings }]
-        : []),
-]);
+const mainNavItems = computed<NavItem[]>(() => {
+    const configured =
+        (page.props as unknown as { sidebarItems?: BackendMenuItem[] })
+            .sidebarItems ?? [];
+
+    return [
+        { title: 'Dashboard', href: dashboard(), icon: LayoutGrid },
+        ...(configured.length
+            ? configured.map(mapMenuItem)
+            : (workspaceItems[role.value] ?? workspaceItems.open)),
+        ...(role.value === 'full_access' || role.value === 'eart_admin'
+            ? [{ title: 'Amministrazione', href: '/admin', icon: Settings }]
+            : []),
+    ];
+});
 
 const navigationLabel = computed(() => roleLabels[role.value] ?? 'Accesso');
 
@@ -125,7 +162,12 @@ const footerNavItems: NavItem[] = [
 </script>
 
 <template>
-    <Sidebar collapsible="icon" variant="inset">
+    <Sidebar
+        collapsible="icon"
+        variant="inset"
+        @mouseenter="setOpen(true)"
+        @mouseleave="setOpen(false)"
+    >
         <SidebarHeader>
             <SidebarMenu>
                 <SidebarMenuItem>

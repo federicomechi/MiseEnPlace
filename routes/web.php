@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DevelopmentController;
+use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\SupplierController;
@@ -38,6 +39,12 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('admin/development/{developmentEntry}/edit', [DevelopmentController::class, 'edit'])->name('admin.development.edit');
     Route::put('admin/development/{developmentEntry}', [DevelopmentController::class, 'update'])->name('admin.development.update');
     Route::delete('admin/development/{developmentEntry}', [DevelopmentController::class, 'destroy'])->name('admin.development.destroy');
+    Route::get('admin/menus', [MenuController::class, 'index'])->name('admin.menus.index');
+    Route::get('admin/menus/create', [MenuController::class, 'create'])->name('admin.menus.create');
+    Route::post('admin/menus', [MenuController::class, 'store'])->name('admin.menus.store');
+    Route::get('admin/menus/{menuItem}/edit', [MenuController::class, 'edit'])->name('admin.menus.edit');
+    Route::put('admin/menus/{menuItem}', [MenuController::class, 'update'])->name('admin.menus.update');
+    Route::delete('admin/menus/{menuItem}', [MenuController::class, 'destroy'])->name('admin.menus.destroy');
 });
 
 require __DIR__.'/settings.php';

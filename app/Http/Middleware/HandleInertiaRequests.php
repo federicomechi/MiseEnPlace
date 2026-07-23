@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\MenuItem;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -42,6 +43,9 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'sidebarItems' => fn (): array => $request->user()
+                ? MenuItem::query()->where('role', $request->user()->role ?? 'open')->where('is_active', true)->whereNull('parent_id')->with(['children' => fn ($query) => $query->where('is_active', true)->orderBy('sort_order')->orderBy('title')])->orderBy('sort_order')->orderBy('title')->get()->toArray()
+                : [],
         ];
     }
 }

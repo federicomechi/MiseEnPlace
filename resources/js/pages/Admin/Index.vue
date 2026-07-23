@@ -78,6 +78,13 @@ const areas = [
                 href: '/admin/development',
             },
             {
+                icon: '☷',
+                title: 'Menu sidebar',
+                text: 'Voci e sottogruppi personalizzati per ogni ruolo utente.',
+                tone: 'bg-[#e7f0e6] text-[#476246]',
+                href: '/admin/menus',
+            },
+            {
                 icon: '⇩',
                 title: 'Importazione dati',
                 text: 'Passaggio controllato dei dati da FileMaker.',
