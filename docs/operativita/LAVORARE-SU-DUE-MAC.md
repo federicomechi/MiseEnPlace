@@ -107,7 +107,12 @@ DB_PORT=3306
 DB_DATABASE=mise_en_place
 DB_USERNAME=mariadb
 DB_PASSWORD=LA_TUA_PASSWORD_LOCALE
+
+# Chiave PrimeUI Community: è locale e non va mai inserita in Git.
+VITE_PRIMEUI_LICENSE_KEY=LA_TUA_CHIAVE_PRIMEUI
 ```
+
+La chiave PrimeUI deve essere copiata manualmente anche nel file `.env` del secondo Mac. Il progetto contiene solo il nome della variabile, non la chiave.
 
 Infine crea le tabelle:
 
