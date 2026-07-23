@@ -132,14 +132,16 @@ defineOptions({
                 <div class="h-px flex-1 bg-border" />
             </div>
             <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-                <article
+                <Link
                     v-for="item in area.items"
                     :key="item.title"
-                    class="group flex min-h-20 items-center gap-3 rounded-xl border border-border bg-card p-3 shadow-sm transition hover:border-[#97aa99] hover:shadow-md"
+                    :href="item.href || '/admin'"
+                    class="group flex min-h-24 items-center gap-4 rounded-xl border border-border bg-card p-4 shadow-sm transition hover:border-[#97aa99] hover:shadow-md focus-visible:ring-2 focus-visible:ring-[#55714e] focus-visible:outline-none"
+                    :aria-label="item.title"
                 >
                     <div
                         :class="[
-                            'grid h-9 w-9 shrink-0 place-items-center rounded-lg text-base',
+                            'grid h-12 w-12 shrink-0 place-items-center rounded-xl text-2xl',
                             item.tone,
                         ]"
                     >
@@ -155,19 +157,7 @@ defineOptions({
                             {{ item.text }}
                         </p>
                     </div>
-                    <Link
-                        v-if="item.href"
-                        :href="item.href"
-                        class="shrink-0 rounded-md px-2 py-1 text-xs font-bold text-[#55714e] transition hover:bg-[#e7f0e6]"
-                        :aria-label="`Gestisci ${item.title}`"
-                        >Gestisci</Link
-                    >
-                    <span
-                        v-else
-                        class="shrink-0 text-[10px] font-bold tracking-[0.08em] text-[#91a094] uppercase"
-                        >In arrivo</span
-                    >
-                </article>
+                </Link>
             </div>
         </section>
     </div>
