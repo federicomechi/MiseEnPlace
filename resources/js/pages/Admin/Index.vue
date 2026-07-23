@@ -24,6 +24,7 @@ const areas = [
         group: 'Sistema',
         items: [
             { icon: '♙', title: 'Utenti e permessi', text: 'Accessi, ruoli e autorizzazioni operative.', tone: 'bg-[#e5edf1] text-[#476774]', href: '/admin/users' },
+            { icon: '⌘', title: 'Sviluppo', text: 'Appunti, riferimenti e collegamenti per il progetto.', tone: 'bg-[#e9edf9] text-[#5264a1]', href: '/admin/development' },
             { icon: '⇩', title: 'Importazione dati', text: 'Passaggio controllato dei dati da FileMaker.', tone: 'bg-[#edf0dc] text-[#68773d]' },
             { icon: '▣', title: 'Impostazioni', text: 'Preferenze dell’applicazione e valori condivisi.', tone: 'bg-[#eeeeea] text-[#60645e]' },
         ],

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\DevelopmentController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\WorkspaceController;
@@ -31,6 +32,12 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::post('admin/users', [UserController::class, 'store'])->name('admin.users.store');
     Route::put('admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
     Route::delete('admin/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+    Route::get('admin/development', [DevelopmentController::class, 'index'])->name('admin.development.index');
+    Route::get('admin/development/create', [DevelopmentController::class, 'create'])->name('admin.development.create');
+    Route::post('admin/development', [DevelopmentController::class, 'store'])->name('admin.development.store');
+    Route::get('admin/development/{developmentEntry}/edit', [DevelopmentController::class, 'edit'])->name('admin.development.edit');
+    Route::put('admin/development/{developmentEntry}', [DevelopmentController::class, 'update'])->name('admin.development.update');
+    Route::delete('admin/development/{developmentEntry}', [DevelopmentController::class, 'destroy'])->name('admin.development.destroy');
 });
 
 require __DIR__.'/settings.php';
