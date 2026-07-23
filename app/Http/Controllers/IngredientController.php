@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Ingredient;
 use App\Models\Supplier;
+use App\Models\SupplierPrice;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -36,7 +37,7 @@ class IngredientController extends Controller
             ->orderBy('name')
             ->paginate(24)
             ->withQueryString()
-            ->through(fn (Ingredient $ingredient): array => [
+            ->through(fn ($ingredient): array => [
                 'id' => $ingredient->id,
                 'code' => $ingredient->code,
                 'name' => $ingredient->name,
@@ -89,7 +90,7 @@ class IngredientController extends Controller
                 'unit' => $ingredient->unit,
                 'notes' => $ingredient->notes,
                 'available_for_bar' => $ingredient->available_for_bar,
-                'prices' => $ingredient->supplierPrices->map(fn ($price): array => [
+                'prices' => $ingredient->supplierPrices->map(fn (SupplierPrice $price): array => [
                     'id' => $price->id,
                     'supplier_id' => $price->supplier_id,
                     'supplier_code' => $price->supplier_code,
@@ -164,7 +165,10 @@ class IngredientController extends Controller
         ]);
     }
 
-    /** @param array<string, mixed> $data */
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array{code: mixed, name: mixed, category: mixed, unit: mixed, notes: mixed, available_for_bar: mixed}
+     */
     private function ingredientData(array $data): array
     {
         return [

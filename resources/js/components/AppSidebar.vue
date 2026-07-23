@@ -1,7 +1,18 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import { BookOpen, ClipboardList, CookingPot, FolderGit2, GlassWater, LayoutGrid, Salad, Settings, SlidersHorizontal, Store, UsersRound } from '@lucide/vue';
+import {
+    BookOpen,
+    ClipboardList,
+    CookingPot,
+    FolderGit2,
+    GlassWater,
+    LayoutGrid,
+    Salad,
+    Settings,
+    SlidersHorizontal,
+    Store,
+} from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -37,27 +48,53 @@ const workspaceItems: Record<string, NavItem[]> = {
         { title: 'Ricette', href: '/operativita/recipes', icon: BookOpen },
         { title: 'Ingredienti', href: '/operativita/ingredients', icon: Salad },
         { title: 'Menu', href: '/operativita/menus', icon: ClipboardList },
-        { title: 'Produzione', href: '/operativita/production', icon: CookingPot },
+        {
+            title: 'Produzione',
+            href: '/operativita/production',
+            icon: CookingPot,
+        },
         { title: 'Bar e bevande', href: '/operativita/bar', icon: GlassWater },
         { title: 'Fornitori', href: '/operativita/suppliers', icon: Store },
-        { title: 'Impostazioni', href: '/operativita/settings', icon: SlidersHorizontal },
+        {
+            title: 'Impostazioni',
+            href: '/operativita/settings',
+            icon: SlidersHorizontal,
+        },
     ],
     eart_admin: [],
     all: [
         { title: 'Ricette', href: '/operativita/recipes', icon: BookOpen },
         { title: 'Ingredienti', href: '/operativita/ingredients', icon: Salad },
         { title: 'Menu', href: '/operativita/menus', icon: ClipboardList },
-        { title: 'Produzione', href: '/operativita/production', icon: CookingPot },
+        {
+            title: 'Produzione',
+            href: '/operativita/production',
+            icon: CookingPot,
+        },
         { title: 'Bar e bevande', href: '/operativita/bar', icon: GlassWater },
     ],
     kitchen: [
         { title: 'Ricette', href: '/operativita/recipes', icon: BookOpen },
         { title: 'Ingredienti', href: '/operativita/ingredients', icon: Salad },
-        { title: 'Produzione', href: '/operativita/production', icon: CookingPot },
+        {
+            title: 'Produzione',
+            href: '/operativita/production',
+            icon: CookingPot,
+        },
     ],
-    bar: [{ title: 'Bar e bevande', href: '/operativita/bar', icon: GlassWater }],
-    client: [{ title: 'Menu', href: '/operativita/menus', icon: ClipboardList }],
-    first: [{ title: 'Configurazione iniziale', href: '/operativita/setup', icon: SlidersHorizontal }],
+    bar: [
+        { title: 'Bar e bevande', href: '/operativita/bar', icon: GlassWater },
+    ],
+    client: [
+        { title: 'Menu', href: '/operativita/menus', icon: ClipboardList },
+    ],
+    first: [
+        {
+            title: 'Configurazione iniziale',
+            href: '/operativita/setup',
+            icon: SlidersHorizontal,
+        },
+    ],
     open: [],
 };
 

@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserCanAccessWorkspaceSection;
+use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;

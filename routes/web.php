@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DevelopmentController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\WorkspaceController;
