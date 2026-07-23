@@ -52,6 +52,13 @@ const modules = [
                     >
                         Vai al pannello
                     </Link>
+                    <Link
+                        v-if="$page.props.auth.user"
+                        href="/admin"
+                        class="rounded-full border border-[#284a38]/20 bg-white/60 px-4 py-2.5 text-[#405248] transition hover:bg-white"
+                    >
+                        Admin
+                    </Link>
                     <template v-else>
                         <Link :href="login()" class="rounded-full px-4 py-2.5 text-[#405248] transition hover:bg-white/70">
                             Accedi
