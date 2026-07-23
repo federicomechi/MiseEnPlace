@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\DevelopmentController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\IngredientController;
+use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\ReferenceCatalogController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SupplierPriceController;
 use App\Http\Controllers\WorkspaceController;
@@ -16,6 +18,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
     Route::middleware('workspace')->group(function (): void {
         Route::get('operativita/ingredients', [IngredientController::class, 'index'])->name('ingredients.index');
+        Route::get('operativita/recipes', [RecipeController::class, 'index'])->name('recipes.index');
+        Route::get('operativita/recipes/create', [RecipeController::class, 'create'])->name('recipes.create');
+        Route::post('operativita/recipes', [RecipeController::class, 'store'])->name('recipes.store');
+        Route::get('operativita/recipes/{recipe}/edit', [RecipeController::class, 'edit'])->name('recipes.edit');
+        Route::put('operativita/recipes/{recipe}', [RecipeController::class, 'update'])->name('recipes.update');
+        Route::delete('operativita/recipes/{recipe}', [RecipeController::class, 'destroy'])->name('recipes.destroy');
         Route::get('operativita/ingredients/create', [IngredientController::class, 'create'])->name('ingredients.create');
         Route::post('operativita/ingredients', [IngredientController::class, 'store'])->name('ingredients.store');
         Route::get('operativita/ingredients/{ingredient}/edit', [IngredientController::class, 'edit'])->name('ingredients.edit');
@@ -26,6 +34,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('operativita/ingredients/fornitori/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
         Route::delete('operativita/ingredients/fornitori/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
         Route::get('operativita/ingredients/listini', [SupplierPriceController::class, 'index'])->name('supplier-prices.index');
+        Route::get('operativita/{section}', [ReferenceCatalogController::class, 'index'])->whereIn('section', ['allergens', 'equipment'])->name('reference.index');
+        Route::post('operativita/{section}', [ReferenceCatalogController::class, 'store'])->whereIn('section', ['allergens', 'equipment'])->name('reference.store');
+        Route::put('operativita/{section}/{item}', [ReferenceCatalogController::class, 'update'])->whereIn('section', ['allergens', 'equipment'])->name('reference.update');
+        Route::delete('operativita/{section}/{item}', [ReferenceCatalogController::class, 'destroy'])->whereIn('section', ['allergens', 'equipment'])->name('reference.destroy');
     });
     Route::get('operativita/{section}', WorkspaceController::class)->middleware('workspace')->name('workspace');
 });

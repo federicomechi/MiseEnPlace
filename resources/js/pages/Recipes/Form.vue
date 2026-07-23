@@ -1,0 +1,21 @@
+<script setup lang="ts">
+import { Head, router, useForm } from '@inertiajs/vue3';
+import Button from 'primevue/button'; import InputText from 'primevue/inputtext'; import InputNumber from 'primevue/inputnumber'; import Textarea from 'primevue/textarea';
+type Recipe = { id: number; name: string; print_name: string | null; tag: string | null; season: string | null; yield_quantity: string | null; yield_unit: string | null; total_minutes: number | null; preparation_minutes: number | null; cooking_minutes: number | null; shelf_life_days: number | null; presentation: string | null; storage_instructions: string | null; notes: string | null };
+const props = defineProps<{ recipe: Recipe | null }>();
+const form = useForm({ name: props.recipe?.name ?? '', print_name: props.recipe?.print_name ?? '', tag: props.recipe?.tag ?? '', season: props.recipe?.season ?? '', yield_quantity: props.recipe?.yield_quantity ? Number(props.recipe.yield_quantity) : null, yield_unit: props.recipe?.yield_unit ?? '', total_minutes: props.recipe?.total_minutes ?? null, preparation_minutes: props.recipe?.preparation_minutes ?? null, cooking_minutes: props.recipe?.cooking_minutes ?? null, shelf_life_days: props.recipe?.shelf_life_days ?? null, presentation: props.recipe?.presentation ?? '', storage_instructions: props.recipe?.storage_instructions ?? '', notes: props.recipe?.notes ?? '' });
+function submit(): void {
+ if (props.recipe) {
+  form.put('/operativita/recipes/' + props.recipe.id);
+ } else {
+  form.post('/operativita/recipes');
+ }
+}
+function remove(): void {
+ if (props.recipe && window.confirm('Eliminare questa ricetta?')) {
+router.delete('/operativita/recipes/' + props.recipe.id);
+} 
+}
+defineOptions({ layout: { breadcrumbs: [{ title: 'Ricette', href: '/operativita/recipes' }, { title: 'Modifica', href: '/operativita/recipes' }] } });
+</script>
+<template><Head :title="recipe ? 'Modifica ' + recipe.name : 'Nuova ricetta'" /><div class="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-4 p-3 md:p-5"><header class="flex items-end justify-between border-b border-border pb-3"><div><h1 class="font-serif text-2xl text-[#2c4133]">{{ recipe ? 'Modifica ricetta' : 'Nuova ricetta' }}</h1><p class="text-sm text-muted-foreground">I passaggi e gli ingredienti potranno essere aggiunti nella scheda ricetta.</p></div><Button v-if="recipe" label="Elimina" severity="danger" text @click="remove" /></header><form class="grid gap-4 rounded-xl border border-border bg-card p-4 shadow-sm" @submit.prevent="submit"><div class="grid gap-4 md:grid-cols-2"><label class="grid gap-1 text-sm font-medium">Nome<InputText v-model="form.name" /><small v-if="form.errors.name" class="text-destructive">{{ form.errors.name }}</small></label><label class="grid gap-1 text-sm font-medium">Nome stampa<InputText v-model="form.print_name" /></label><label class="grid gap-1 text-sm font-medium">Tag<InputText v-model="form.tag" placeholder="es. base, dessert" /></label><label class="grid gap-1 text-sm font-medium">Stagione<InputText v-model="form.season" /></label><label class="grid gap-1 text-sm font-medium">Resa<InputNumber v-model="form.yield_quantity" :min="0" /><InputText v-model="form.yield_unit" placeholder="unità" /></label><label class="grid gap-1 text-sm font-medium">Durata totale (min)<InputNumber v-model="form.total_minutes" :min="0" /></label><label class="grid gap-1 text-sm font-medium">Preparazione (min)<InputNumber v-model="form.preparation_minutes" :min="0" /></label><label class="grid gap-1 text-sm font-medium">Cottura (min)<InputNumber v-model="form.cooking_minutes" :min="0" /></label><label class="grid gap-1 text-sm font-medium">Conservazione (giorni)<InputNumber v-model="form.shelf_life_days" :min="0" /></label></div><label class="grid gap-1 text-sm font-medium">Presentazione<Textarea v-model="form.presentation" rows="3" /></label><label class="grid gap-1 text-sm font-medium">Conservazione<Textarea v-model="form.storage_instructions" rows="3" /></label><label class="grid gap-1 text-sm font-medium">Note<Textarea v-model="form.notes" rows="3" /></label><div class="flex justify-end gap-2"><Button as="a" href="/operativita/recipes" label="Annulla" severity="secondary" outlined /><Button type="submit" :label="recipe ? 'Salva modifiche' : 'Crea ricetta'" :loading="form.processing" /></div></form></div></template>

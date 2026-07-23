@@ -16,6 +16,10 @@ class EnsureUserCanAccessWorkspaceSection
             $section = 'ingredients';
         }
 
+        if ($section === '' && $request->is('operativita/recipes*')) {
+            $section = 'recipes';
+        }
+
         abort_unless(
             $request->user()?->hasAdministrativeAccess()
                 || in_array($section, $request->user()?->permittedWorkspaceSections() ?? [], true),
