@@ -79,6 +79,13 @@ const areas = [
                 href: '/admin/users',
             },
             {
+                icon: '⌂',
+                title: 'Azienda',
+                text: 'Anagrafica DB_cliente e utenti collegati all’azienda attiva.',
+                tone: 'bg-[#e5edf1] text-[#476774]',
+                href: '/admin/clients',
+            },
+            {
                 icon: '⌘',
                 title: 'Sviluppo',
                 text: 'Appunti, riferimenti e collegamenti per il progetto.',

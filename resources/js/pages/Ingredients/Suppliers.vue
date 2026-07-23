@@ -103,6 +103,13 @@ defineOptions({
                 severity="secondary"
                 outlined
             />
+            <Button
+                as="a"
+                href="/operativita/ingredients/listini"
+                label="Listini"
+                severity="secondary"
+                outlined
+            />
         </header>
         <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_22rem]">
             <section class="rounded-xl border border-border bg-card shadow-sm">
