@@ -6,6 +6,9 @@ Route::inertia('/', 'Welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+});
+
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::inertia('admin', 'Admin/Index')->name('admin');
 });
 
