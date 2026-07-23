@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToClient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
@@ -9,8 +10,10 @@ use Illuminate\Support\Carbon;
 /** @property Carbon|null $cost_date */
 class Ingredient extends Model
 {
+    use BelongsToClient;
+
     protected $fillable = [
-        'filemaker_id', 'code', 'name', 'category', 'unit', 'package_quantity', 'unit_cost',
+        'client_id', 'filemaker_id', 'code', 'name', 'category', 'unit', 'package_quantity', 'unit_cost',
         'cost_date', 'notes', 'available_for_bar',
     ];
 

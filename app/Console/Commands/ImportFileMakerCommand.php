@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Client;
 use App\Models\Ingredient;
 use App\Models\Supplier;
 use App\Models\SupplierPrice;
@@ -18,16 +19,31 @@ class ImportFileMakerCommand extends Command
     public function handle(): int
     {
         $path = $this->option('path') ?: storage_path('app/private/filemaker-import');
-        $suppliers = $this->importSuppliers($path);
-        $this->importIngredients($path, $suppliers);
+        $client = $this->importClient($path);
+        $suppliers = $this->importSuppliers($path, $client);
+        $this->importIngredients($path, $suppliers, $client);
+        foreach (['users', 'recipes', 'ingredients', 'recipe_steps', 'recipe_step_ingredients', 'suppliers', 'supplier_prices', 'development_entries', 'menu_items'] as $table) {
+            DB::table($table)->whereNull('client_id')->update(['client_id' => $client->id]);
+        }
 
         $this->info('Importazione ingredienti, fornitori e listini completata.');
 
         return self::SUCCESS;
     }
 
+    private function importClient(string $path): Client
+    {
+        $rows = $this->rows($path.'/DB_cliente.csv');
+        $row = $rows->current();
+
+        return Client::query()->updateOrCreate(
+            ['filemaker_id' => $this->nullable($row[0] ?? null)],
+            ['name' => $this->nullable($row[2] ?? null) ?? 'Azienda FileMaker', 'location_id' => $this->nullable($row[3] ?? null), 'location_name' => $this->nullable($row[4] ?? null), 'email' => $this->nullable($row[6] ?? null), 'expires_at' => $this->date($row[5] ?? null)],
+        );
+    }
+
     /** @return array<int|string, Supplier> */
-    private function importSuppliers(string $path): array
+    private function importSuppliers(string $path, Client $client): array
     {
         $result = [];
         foreach ($this->rows($path.'/DB_fornitori.csv') as $row) {
@@ -40,7 +56,7 @@ class ImportFileMakerCommand extends Command
             $existingWithKey = $supplierKey !== null ? Supplier::query()->where('filemaker_id', $supplierKey)->first() : null;
             $supplier = Supplier::query()->updateOrCreate(
                 ['name' => $name],
-                ['filemaker_id' => $existingWithKey === null || $existingWithKey->name === $name ? $supplierKey : null, 'email' => $this->nullable($row[0] ?? null), 'phone' => $this->nullable($row[5] ?? null), 'notes' => $this->nullable($row[4] ?? null), 'is_active' => true],
+                ['client_id' => $client->id, 'filemaker_id' => $existingWithKey === null || $existingWithKey->name === $name ? $supplierKey : null, 'email' => $this->nullable($row[0] ?? null), 'phone' => $this->nullable($row[5] ?? null), 'notes' => $this->nullable($row[4] ?? null), 'is_active' => true],
             );
             if ($supplierKey !== null) {
                 $result[$supplierKey] = $supplier;
@@ -52,7 +68,7 @@ class ImportFileMakerCommand extends Command
     }
 
     /** @param array<int|string, Supplier> $suppliers */
-    private function importIngredients(string $path, array $suppliers): void
+    private function importIngredients(string $path, array $suppliers, Client $client): void
     {
         foreach ($this->rows($path.'/DB_ingredienti.csv') as $row) {
             $filemakerId = $this->integer($row[7] ?? null);
@@ -61,10 +77,10 @@ class ImportFileMakerCommand extends Command
                 continue;
             }
 
-            DB::transaction(function () use ($row, $filemakerId, $name, $suppliers): void {
+            DB::transaction(function () use ($row, $filemakerId, $name, $suppliers, $client): void {
                 $ingredient = Ingredient::query()->updateOrCreate(
                     ['filemaker_id' => $filemakerId],
-                    ['name' => $name, 'unit' => $this->nullable($row[12] ?? null), 'package_quantity' => $this->decimal($row[11] ?? null), 'unit_cost' => $this->decimal($row[3] ?? null), 'cost_date' => $this->date($row[4] ?? null), 'notes' => $this->nullable($row[10] ?? null), 'available_for_bar' => trim($row[5] ?? '') !== ''],
+                    ['client_id' => $client->id, 'name' => $name, 'unit' => $this->nullable($row[12] ?? null), 'package_quantity' => $this->decimal($row[11] ?? null), 'unit_cost' => $this->decimal($row[3] ?? null), 'cost_date' => $this->date($row[4] ?? null), 'notes' => $this->nullable($row[10] ?? null), 'available_for_bar' => trim($row[5] ?? '') !== ''],
                 );
 
                 $supplier = $suppliers[$this->supplierKey($row[6] ?? '')] ?? null;
@@ -73,15 +89,15 @@ class ImportFileMakerCommand extends Command
                 if ($supplier && $price !== null && $date !== null) {
                     SupplierPrice::query()->updateOrCreate(
                         ['ingredient_id' => $ingredient->id, 'supplier_id' => $supplier->id, 'valid_from' => $date],
-                        ['package_quantity' => $this->decimal($row[11] ?? null), 'package_unit' => $this->nullable($row[12] ?? null), 'package_price' => $price, 'is_current' => true],
+                        ['client_id' => $client->id, 'package_quantity' => $this->decimal($row[11] ?? null), 'package_unit' => $this->nullable($row[12] ?? null), 'package_price' => $price, 'is_current' => true],
                     );
                 }
             });
         }
     }
 
-    /** @return iterable<int, array<int, string>> */
-    private function rows(string $file): iterable
+    /** @return \Generator<int, array<int, string>> */
+    private function rows(string $file): \Generator
     {
         $contents = file_get_contents($file);
         foreach (preg_split("/\r\n|\r|\n/", $contents ?: '') ?: [] as $line) {

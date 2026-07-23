@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToClient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MenuItem extends Model
 {
-    protected $fillable = ['role', 'parent_id', 'title', 'href', 'icon', 'sort_order', 'is_active'];
+    use BelongsToClient;
+
+    protected $fillable = ['client_id', 'role', 'parent_id', 'title', 'href', 'icon', 'sort_order', 'is_active'];
 
     protected function casts(): array
     {

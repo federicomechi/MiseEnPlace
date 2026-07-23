@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToClient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Recipe extends Model
 {
+    use BelongsToClient;
+
     protected $fillable = [
-        'filemaker_id', 'source_created_at', 'name', 'print_name', 'tag',
+        'client_id', 'filemaker_id', 'source_created_at', 'name', 'print_name', 'tag',
         'yield_quantity', 'yield_unit', 'multiplier_quantity', 'presentation',
         'season', 'total_minutes', 'preparation_minutes', 'cooking_minutes',
         'shelf_life_days', 'storage_instructions', 'notes',

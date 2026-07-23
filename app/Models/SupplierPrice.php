@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToClient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -9,8 +10,10 @@ use Illuminate\Support\Carbon;
 /** @property Carbon|null $valid_from */
 class SupplierPrice extends Model
 {
+    use BelongsToClient;
+
     protected $fillable = [
-        'ingredient_id', 'supplier_id', 'supplier_code', 'package_name', 'package_quantity', 'package_unit',
+        'client_id', 'ingredient_id', 'supplier_id', 'supplier_code', 'package_name', 'package_quantity', 'package_unit',
         'package_price', 'valid_from', 'is_current', 'notes',
     ];
 

@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToClient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Supplier extends Model
 {
-    protected $fillable = ['filemaker_id', 'name', 'contact_name', 'email', 'phone', 'notes', 'is_active'];
+    use BelongsToClient;
+
+    protected $fillable = ['client_id', 'filemaker_id', 'name', 'contact_name', 'email', 'phone', 'notes', 'is_active'];
 
     protected function casts(): array
     {

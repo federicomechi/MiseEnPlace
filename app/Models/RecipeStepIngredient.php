@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToClient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RecipeStepIngredient extends Model
 {
+    use BelongsToClient;
+
     protected $fillable = [
-        'filemaker_id', 'recipe_step_id', 'ingredient_id', 'quantity', 'unit', 'notes',
+        'client_id', 'filemaker_id', 'recipe_step_id', 'ingredient_id', 'quantity', 'unit', 'notes',
     ];
 
     /** @return BelongsTo<RecipeStep, $this> */
