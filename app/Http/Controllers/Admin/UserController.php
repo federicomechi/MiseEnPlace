@@ -19,7 +19,10 @@ class UserController extends Controller
             'users' => User::query()
                 ->orderByDesc('is_admin')
                 ->orderBy('name')
-                ->get(['id', 'name', 'email', 'email_verified_at', 'is_admin', 'created_at']),
+                ->get(['id', 'name', 'email', 'email_verified_at', 'is_admin', 'role', 'created_at']),
+            'roleOptions' => collect(User::roleLabels())
+                ->map(fn (string $label, string $value): array => ['label' => $label, 'value' => $value])
+                ->values(),
         ]);
     }
 
@@ -29,14 +32,17 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
-            'is_admin' => ['boolean'],
+            'role' => ['nullable', 'string', Rule::in(array_keys(User::roleLabels()))],
         ]);
+
+        $role = $data['role'] ?? User::ROLE_OPEN;
 
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'is_admin' => $data['is_admin'] ?? false,
+            'role' => $role,
+            'is_admin' => User::isAdministrativeRole($role),
         ]);
 
         $user->forceFill(['email_verified_at' => now()])->save();
@@ -52,17 +58,20 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user)],
             'password' => ['nullable', 'string', 'min:8'],
-            'is_admin' => ['boolean'],
+            'role' => ['nullable', 'string', Rule::in(array_keys(User::roleLabels()))],
         ]);
 
-        if ($request->user()->is($user) && ! ($data['is_admin'] ?? false)) {
-            return back()->withErrors(['is_admin' => 'Non puoi revocare il tuo ruolo amministratore.']);
+        $role = $data['role'] ?? $user->role;
+
+        if ($request->user()->is($user) && ! User::isAdministrativeRole($role)) {
+            return back()->withErrors(['role' => 'Non puoi revocare il tuo accesso amministrativo.']);
         }
 
         $user->fill([
             'name' => $data['name'],
             'email' => $data['email'],
-            'is_admin' => $data['is_admin'] ?? false,
+            'role' => $role,
+            'is_admin' => User::isAdministrativeRole($role),
         ]);
 
         if (filled($data['password'] ?? null)) {
@@ -82,7 +91,7 @@ class UserController extends Controller
             return back()->withErrors(['users' => 'Non puoi eliminare il tuo account.']);
         }
 
-        if ($user->is_admin && User::query()->where('is_admin', true)->count() <= 1) {
+        if ($user->hasAdministrativeAccess() && User::query()->whereIn('role', [User::ROLE_FULL_ACCESS, User::ROLE_EART_ADMIN])->count() <= 1) {
             return back()->withErrors(['users' => 'Deve rimanere almeno un amministratore.']);
         }
 

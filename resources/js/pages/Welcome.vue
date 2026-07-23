@@ -46,7 +46,7 @@ const modules = [
 
                 <nav class="flex items-center gap-2 text-sm font-medium">
                     <Link
-                        v-if="$page.props.auth.user"
+                        v-if="$page.props.auth.user?.is_admin"
                         :href="dashboard()"
                         class="rounded-full bg-[#284a38] px-5 py-2.5 text-[#f8f4ea] transition hover:bg-[#1b3829]"
                     >

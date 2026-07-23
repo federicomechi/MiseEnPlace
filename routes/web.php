@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+    Route::get('operativita/{section}', WorkspaceController::class)->middleware('workspace')->name('workspace');
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {

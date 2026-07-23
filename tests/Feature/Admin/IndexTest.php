@@ -33,4 +33,21 @@ class IndexTest extends TestCase
             ->get('/admin')
             ->assertForbidden();
     }
+
+    public function test_kitchen_profile_can_only_access_its_workspace_areas(): void
+    {
+        $kitchenUser = User::factory()->create([
+            'email_verified_at' => now(),
+            'role' => User::ROLE_KITCHEN,
+            'is_admin' => false,
+        ]);
+
+        $this->actingAs($kitchenUser)
+            ->get('/operativita/recipes')
+            ->assertOk();
+
+        $this->actingAs($kitchenUser)
+            ->get('/operativita/bar')
+            ->assertForbidden();
+    }
 }
