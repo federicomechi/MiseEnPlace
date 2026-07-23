@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { Head, router, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import Button from 'primevue/button';
+import Checkbox from 'primevue/checkbox';
+import InputText from 'primevue/inputtext';
+import Password from 'primevue/password';
 import InputError from '@/components/InputError.vue';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -112,11 +116,11 @@ defineOptions({
             <aside class="h-fit rounded-2xl border border-border bg-card p-5 shadow-sm">
                 <h2 class="font-serif text-2xl">Nuovo utente</h2><p class="mt-1 text-sm text-muted-foreground">L'account sarà subito attivo.</p>
                 <form class="mt-5 grid gap-4" @submit.prevent="createUser">
-                    <div><Label for="new-name">Nome</Label><Input id="new-name" v-model="createForm.name" class="mt-2" required autocomplete="name" /><InputError :message="createForm.errors.name" /></div>
-                    <div><Label for="new-email">Email</Label><Input id="new-email" v-model="createForm.email" class="mt-2" type="email" required autocomplete="email" /><InputError :message="createForm.errors.email" /></div>
-                    <div><Label for="new-password">Password</Label><Input id="new-password" v-model="createForm.password" class="mt-2" type="password" required minlength="8" autocomplete="new-password" /><p class="mt-1 text-xs text-muted-foreground">Almeno 8 caratteri.</p><InputError :message="createForm.errors.password" /></div>
-                    <label class="flex items-center gap-3 text-sm font-medium"><input v-model="createForm.is_admin" type="checkbox" class="h-4 w-4 accent-[#284a38]" /> Concedi privilegi amministrativi</label>
-                    <button type="submit" :disabled="createForm.processing" class="rounded-xl bg-[#284a38] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#1b3829] disabled:opacity-50">Crea utente</button>
+                    <div><Label for="new-name">Nome</Label><InputText id="new-name" v-model="createForm.name" class="mt-2 w-full" required autocomplete="name" /><InputError :message="createForm.errors.name" /></div>
+                    <div><Label for="new-email">Email</Label><InputText id="new-email" v-model="createForm.email" class="mt-2 w-full" type="email" required autocomplete="email" /><InputError :message="createForm.errors.email" /></div>
+                    <div><Label for="new-password">Password</Label><Password id="new-password" v-model="createForm.password" class="mt-2 w-full" input-class="w-full" :feedback="false" toggle-mask required autocomplete="new-password" /><p class="mt-1 text-xs text-muted-foreground">Almeno 8 caratteri.</p><InputError :message="createForm.errors.password" /></div>
+                    <label class="flex items-center gap-3 text-sm font-medium"><Checkbox v-model="createForm.is_admin" binary /> Concedi privilegi amministrativi</label>
+                    <Button type="submit" label="Crea utente" icon="pi pi-user-plus" :loading="createForm.processing" class="w-full" />
                 </form>
             </aside>
         </div>
