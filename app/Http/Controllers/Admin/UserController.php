@@ -38,6 +38,7 @@ class UserController extends Controller
         $role = $data['role'] ?? User::ROLE_OPEN;
 
         $user = User::create([
+            'client_id' => $request->user()->client_id,
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
