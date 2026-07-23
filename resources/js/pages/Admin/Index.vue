@@ -42,36 +42,24 @@ defineOptions({
 <template>
     <Head title="Amministrazione" />
 
-    <div class="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 p-4 md:p-8">
-        <section class="overflow-hidden rounded-3xl bg-[#284a38] px-6 py-8 text-[#f8f4ea] shadow-xl shadow-[#284a38]/15 md:px-9 md:py-10">
-            <p class="text-xs font-bold uppercase tracking-[0.18em] text-[#c7ddc2]">MiseEnPlace · Centro di controllo</p>
-            <div class="mt-4 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-                <div>
-                    <h1 class="font-serif text-4xl tracking-tight md:text-5xl">Amministrazione</h1>
-                    <p class="mt-3 max-w-xl text-[#d7e5d3]">Da qui prenderanno forma tutti gli strumenti di gestione della cucina. Scegli un’area per iniziare a configurare il progetto.</p>
-                </div>
-                <span class="w-fit rounded-full border border-[#c7ddc2]/30 bg-white/10 px-3 py-1.5 text-xs font-semibold text-[#e1eedc]">Struttura iniziale</span>
-            </div>
-        </section>
-
+    <div class="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-5 p-3 md:p-5">
+        <h1 class="sr-only">Amministrazione</h1>
         <section v-for="area in areas" :key="area.group">
-            <div class="mb-4 flex items-center gap-3">
-                <h2 class="font-serif text-2xl text-[#2c4133]">{{ area.group }}</h2>
+            <div class="mb-2 flex items-center gap-2">
+                <h2 class="text-sm font-bold uppercase tracking-[0.08em] text-[#526352]">{{ area.group }}</h2>
                 <div class="h-px flex-1 bg-border" />
             </div>
-            <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                <article v-for="item in area.items" :key="item.title" class="group rounded-2xl border border-border bg-card p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-                    <div :class="['grid h-11 w-11 place-items-center rounded-xl text-lg', item.tone]">{{ item.icon }}</div>
-                    <h3 class="mt-5 text-base font-bold text-foreground">{{ item.title }}</h3>
-                    <p class="mt-2 min-h-10 text-sm leading-5 text-muted-foreground">{{ item.text }}</p>
-                    <Link v-if="item.href" :href="item.href" class="mt-5 inline-block text-xs font-bold uppercase tracking-[0.12em] text-[#55714e] transition group-hover:text-[#284a38]">Gestisci →</Link>
-                    <span v-else class="mt-5 inline-block text-xs font-bold uppercase tracking-[0.12em] text-[#91a094]">In arrivo</span>
+            <div class="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                <article v-for="item in area.items" :key="item.title" class="group flex min-h-20 items-center gap-3 rounded-xl border border-border bg-card p-3 shadow-sm transition hover:border-[#97aa99] hover:shadow-md">
+                    <div :class="['grid h-9 w-9 shrink-0 place-items-center rounded-lg text-base', item.tone]">{{ item.icon }}</div>
+                    <div class="min-w-0 flex-1">
+                        <h3 class="text-sm font-bold text-foreground">{{ item.title }}</h3>
+                        <p class="mt-0.5 text-xs leading-4 text-muted-foreground">{{ item.text }}</p>
+                    </div>
+                    <Link v-if="item.href" :href="item.href" class="shrink-0 rounded-md px-2 py-1 text-xs font-bold text-[#55714e] transition hover:bg-[#e7f0e6]" :aria-label="`Gestisci ${item.title}`">Gestisci</Link>
+                    <span v-else class="shrink-0 text-[10px] font-bold uppercase tracking-[0.08em] text-[#91a094]">In arrivo</span>
                 </article>
             </div>
-        </section>
-
-        <section class="rounded-2xl border border-dashed border-[#97aa99] bg-[#f6f7ef] p-5 text-sm text-[#526352]">
-            <strong class="font-semibold text-[#294635]">Prossimo passo:</strong> iniziare dalla gestione di utenti e ricette, quindi collegare ingredienti, fasi e allergeni.
         </section>
     </div>
 </template>
