@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\DevelopmentController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\SupplierPriceController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,12 +25,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('operativita/ingredients/fornitori', [SupplierController::class, 'store'])->name('suppliers.store');
         Route::put('operativita/ingredients/fornitori/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
         Route::delete('operativita/ingredients/fornitori/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
+        Route::get('operativita/ingredients/listini', [SupplierPriceController::class, 'index'])->name('supplier-prices.index');
     });
     Route::get('operativita/{section}', WorkspaceController::class)->middleware('workspace')->name('workspace');
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::inertia('admin', 'Admin/Index')->name('admin');
+    Route::get('admin/clients', [ClientController::class, 'index'])->name('admin.clients.index');
     Route::inertia('admin/import', 'Admin/Placeholder', [
         'title' => 'Importazione dati',
         'description' => 'Qui verrà gestito il caricamento controllato degli export FileMaker e la sincronizzazione delle tabelle.',
