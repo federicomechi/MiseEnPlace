@@ -79,7 +79,7 @@ class User extends Authenticatable implements PasskeyUser
     public function permittedWorkspaceSections(): array
     {
         return match ($this->role ?? self::ROLE_OPEN) {
-            self::ROLE_FULL_ACCESS, self::ROLE_EART_ADMIN => ['recipes', 'ingredients', 'menus', 'production', 'bar', 'suppliers', 'settings'],
+            self::ROLE_FULL_ACCESS, self::ROLE_EART_ADMIN => ['recipes', 'ingredients', 'menus', 'production', 'bar', 'suppliers', 'settings', 'allergens', 'equipment'],
             self::ROLE_ALL => ['recipes', 'ingredients', 'menus', 'production', 'bar'],
             self::ROLE_KITCHEN => ['recipes', 'ingredients', 'production'],
             self::ROLE_BAR => ['bar'],

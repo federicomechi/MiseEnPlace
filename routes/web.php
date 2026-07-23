@@ -29,6 +29,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::inertia('admin', 'Admin/Index')->name('admin');
+    Route::inertia('admin/import', 'Admin/Placeholder', [
+        'title' => 'Importazione dati',
+        'description' => 'Qui verrà gestito il caricamento controllato degli export FileMaker e la sincronizzazione delle tabelle.',
+    ])->name('admin.import');
+    Route::inertia('admin/settings', 'Admin/Placeholder', [
+        'title' => 'Impostazioni',
+        'description' => 'Qui verranno raccolte le preferenze dell’applicazione e i valori condivisi del progetto.',
+    ])->name('admin.settings');
     Route::get('admin/users', [UserController::class, 'index'])->name('admin.users.index');
     Route::post('admin/users', [UserController::class, 'store'])->name('admin.users.store');
     Route::put('admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');

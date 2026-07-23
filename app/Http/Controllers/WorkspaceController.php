@@ -18,6 +18,8 @@ class WorkspaceController extends Controller
         'suppliers' => 'Listini e fornitori',
         'settings' => 'Impostazioni operative',
         'setup' => 'Configurazione iniziale',
+        'allergens' => 'Allergeni',
+        'equipment' => 'Attrezzature e supporti',
     ];
 
     public function __invoke(Request $request, string $section): Response
