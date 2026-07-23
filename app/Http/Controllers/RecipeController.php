@@ -40,6 +40,8 @@ class RecipeController extends Controller
 
     public function edit(Recipe $recipe): Response
     {
+        $recipe->load(['steps.ingredients.ingredient']);
+
         return Inertia::render('Recipes/Form', ['recipe' => $recipe]);
     }
 
