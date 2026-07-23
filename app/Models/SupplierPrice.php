@@ -10,7 +10,7 @@ use Illuminate\Support\Carbon;
 class SupplierPrice extends Model
 {
     protected $fillable = [
-        'supplier_id', 'supplier_code', 'package_name', 'package_quantity', 'package_unit',
+        'ingredient_id', 'supplier_id', 'supplier_code', 'package_name', 'package_quantity', 'package_unit',
         'package_price', 'valid_from', 'is_current', 'notes',
     ];
 

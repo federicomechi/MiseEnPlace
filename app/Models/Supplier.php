@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Supplier extends Model
 {
-    protected $fillable = ['name', 'contact_name', 'email', 'phone', 'notes', 'is_active'];
+    protected $fillable = ['filemaker_id', 'name', 'contact_name', 'email', 'phone', 'notes', 'is_active'];
 
     protected function casts(): array
     {
