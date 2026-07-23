@@ -1,15 +1,20 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 type Recipe = { id: number; name: string; tag: string | null; season: string | null; yield_quantity: string | null; yield_unit: string | null; total_minutes: number | null; steps_count: number };
 type Page = { data: Recipe[]; links: { url: string | null; label: string; active: boolean }[]; from: number | null; to: number | null; total: number };
 const props = defineProps<{ recipes: Page; search: string }>();
 const search = ref(props.search);
+let searchTimer: ReturnType<typeof setTimeout> | undefined;
 function submit(): void {
  router.get('/operativita/recipes', { search: search.value || undefined }, { preserveState: true, replace: true }); 
 }
+watch(search, () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(submit, 300);
+});
 function remove(recipe: Recipe): void {
  if (window.confirm('Eliminare “' + recipe.name + '”?')) {
 router.delete('/operativita/recipes/' + recipe.id);

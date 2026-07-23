@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 type Item = {
     id: number;
@@ -17,16 +18,26 @@ const props = defineProps<{
     items: { data: Item[]; links: unknown[] };
     role: string;
     roles: Record<string, string>;
+    search: string;
 }>();
 const role = ref(props.role);
+const search = ref(props.search);
+let searchTimer: ReturnType<typeof setTimeout> | undefined;
 
 function changeRole(): void {
     router.get(
         '/admin/menus',
-        { role: role.value },
+        { role: role.value, search: search.value || undefined },
         { preserveState: true, replace: true },
     );
 }
+function filter(): void {
+    router.get('/admin/menus', { role: role.value, search: search.value || undefined }, { preserveState: true, replace: true });
+}
+watch(search, () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(filter, 300);
+});
 function remove(item: Item): void {
     if (window.confirm(`Eliminare “${item.title}”?`)) {
         router.delete(`/admin/menus/${item.id}`);
@@ -85,6 +96,7 @@ defineOptions({
                     @change="changeRole"
                 />
             </div>
+            <InputText v-model="search" class="min-w-64 flex-1" placeholder="Cerca voce o collegamento" aria-label="Cerca voci menu" />
             <Link href="/admin" class="text-sm text-muted-foreground underline"
                 >Torna all’amministrazione</Link
             >

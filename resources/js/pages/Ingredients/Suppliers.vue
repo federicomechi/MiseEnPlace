@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import InputText from 'primevue/inputtext';
@@ -21,6 +21,7 @@ type Supplier = {
 const props = defineProps<{ suppliers: Supplier[]; search: string }>();
 const editing = ref<Supplier | null>(null);
 const search = ref(props.search);
+let searchTimer: ReturnType<typeof setTimeout> | undefined;
 const form = useForm({
     name: '',
     contact_name: '',
@@ -72,6 +73,10 @@ function filter(): void {
         { preserveState: true, replace: true },
     );
 }
+watch(search, () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(filter, 300);
+});
 defineOptions({
     layout: {
         breadcrumbs: [

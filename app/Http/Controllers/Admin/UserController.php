@@ -13,13 +13,21 @@ use Inertia\Response;
 
 class UserController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $search = $request->string('search')->trim()->value();
+
         return Inertia::render('Admin/Users', [
             'users' => User::query()
+                ->when($search, fn ($query) => $query->where(function ($query) use ($search): void {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('role', 'like', "%{$search}%");
+                }))
                 ->orderByDesc('is_admin')
                 ->orderBy('name')
                 ->get(['id', 'name', 'email', 'email_verified_at', 'is_admin', 'role', 'created_at']),
+            'search' => $search,
             'roleOptions' => collect(User::roleLabels())
                 ->map(fn (string $label, string $value): array => ['label' => $label, 'value' => $value])
                 ->values(),

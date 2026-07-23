@@ -16,11 +16,16 @@ class MenuController extends Controller
     public function index(Request $request): Response
     {
         $role = $request->string('role')->value() ?: User::ROLE_FULL_ACCESS;
+        $search = $request->string('search')->trim()->value();
 
         return Inertia::render('Admin/Menus/Index', [
-            'items' => MenuItem::query()->where('role', $role)->with('parent')->orderBy('sort_order')->orderBy('title')->paginate(30)->withQueryString(),
+            'items' => MenuItem::query()->where('role', $role)->when($search, fn ($query) => $query->where(function ($query) use ($search): void {
+                $query->where('title', 'like', "%{$search}%")
+                    ->orWhere('href', 'like', "%{$search}%");
+            }))->with('parent')->orderBy('sort_order')->orderBy('title')->paginate(30)->withQueryString(),
             'role' => $role,
             'roles' => User::roleLabels(),
+            'search' => $search,
         ]);
     }
 

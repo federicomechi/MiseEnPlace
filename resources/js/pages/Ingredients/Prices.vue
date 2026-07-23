@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 
@@ -20,9 +20,14 @@ type Price = {
 type Pagination = { data: Price[]; links: { url: string | null; label: string; active: boolean }[]; from: number | null; to: number | null; total: number };
 const props = defineProps<{ prices: Pagination; search: string }>();
 const search = ref(props.search);
+let searchTimer: ReturnType<typeof setTimeout> | undefined;
 function submitSearch(): void {
     router.get('/operativita/ingredients/listini', { search: search.value || undefined }, { preserveState: true, replace: true });
 }
+watch(search, () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(submitSearch, 300);
+});
 defineOptions({ layout: { breadcrumbs: [{ title: 'Ingredienti', href: '/operativita/ingredients' }, { title: 'Listini', href: '/operativita/ingredients/listini' }] } });
 </script>
 

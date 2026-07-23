@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 
@@ -22,6 +22,7 @@ type PaginatedEntries = {
 
 const props = defineProps<{ entries: PaginatedEntries; search: string }>();
 const search = ref(props.search);
+let searchTimer: ReturnType<typeof setTimeout> | undefined;
 
 function submitSearch(): void {
     router.get(
@@ -30,6 +31,10 @@ function submitSearch(): void {
         { preserveState: true, replace: true },
     );
 }
+watch(search, () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(submitSearch, 300);
+});
 
 function removeEntry(entry: DevelopmentEntry): void {
     if (window.confirm(`Eliminare “${entry.title}”?`)) {

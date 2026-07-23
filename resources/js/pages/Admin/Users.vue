@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router, useForm, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
@@ -20,8 +20,10 @@ type User = {
 
 type RoleOption = { label: string; value: string };
 
-defineProps<{ users: User[]; roleOptions: RoleOption[] }>();
+const props = defineProps<{ users: User[]; roleOptions: RoleOption[]; search: string }>();
 const page = usePage();
+const search = ref(props.search);
+let searchTimer: ReturnType<typeof setTimeout> | undefined;
 const currentUserId = computed(() => page.props.auth.user.id);
 const editingId = ref<number | null>(null);
 
@@ -70,6 +72,13 @@ function deleteUser(user: User): void {
         router.delete(`/admin/users/${user.id}`, { preserveScroll: true });
     }
 }
+function filter(): void {
+    router.get('/admin/users', { search: search.value || undefined }, { preserveState: true, replace: true });
+}
+watch(search, () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(filter, 300);
+});
 
 defineOptions({
     layout: {
@@ -96,9 +105,10 @@ defineOptions({
                     Gestisci accessi e ruoli operativi.
                 </p>
             </div>
-            <span class="text-xs font-semibold text-muted-foreground"
-                >{{ users.length }} utenti registrati</span
-            >
+            <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+                <InputText v-model="search" class="min-w-56 flex-1" placeholder="Cerca utente, email o ruolo" aria-label="Cerca utenti" />
+                <span class="text-xs font-semibold text-muted-foreground">{{ users.length }} utenti registrati</span>
+            </div>
         </section>
 
         <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_20rem]">

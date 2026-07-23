@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import InputText from 'primevue/inputtext';
@@ -33,6 +33,7 @@ const props = defineProps<{
 const search = ref(props.filters.search);
 const barOnly = ref(props.filters.bar);
 const hasIngredients = computed(() => props.ingredients.data.length > 0);
+let searchTimer: ReturnType<typeof setTimeout> | undefined;
 
 function applyFilters(): void {
     router.get(
@@ -41,6 +42,10 @@ function applyFilters(): void {
         { preserveState: true, replace: true },
     );
 }
+watch([search, barOnly], () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(applyFilters, 300);
+});
 
 function removeIngredient(ingredient: Ingredient): void {
     if (window.confirm(`Eliminare l’ingrediente “${ingredient.name}”?`)) {
