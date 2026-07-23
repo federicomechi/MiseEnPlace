@@ -47,6 +47,13 @@ Sorgente analizzata: `Ricette.fmp12`, export DDR FileMaker 26.0.1 del 22 luglio 
 
 La chiave composta `ricetta_id + fase_id` visibile in alcune relazioni FileMaker sarà semplificata: in MariaDB la riga ingrediente avrà `fase_id`; la ricetta sarà raggiungibile tramite la fase. Un eventuale `ricetta_id` duplicato sarà ammesso solo se necessario per importazione o prestazioni, con vincolo di coerenza applicativo.
 
+## Ingredienti, fornitori e listini
+
+- `ingredients` conserva l'anagrafica, l'unità base, la categoria e il costo unitario corrente.
+- `suppliers` è l'anagrafica fornitori, indipendente dagli ingredienti.
+- `supplier_prices` sostituisce il listino FileMaker: collega ingrediente e fornitore, memorizza formato, quantità del collo, prezzo e data di validità.
+- Una sola offerta per ingrediente può essere marcata come corrente; da questa vengono aggiornati automaticamente il costo unitario e la relativa data sull'ingrediente.
+
 ## Strategia di migrazione
 
 1. Definire lo schema MariaDB del nucleo Ricette e scrivere le migration Laravel.

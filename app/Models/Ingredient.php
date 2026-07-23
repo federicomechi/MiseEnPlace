@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Ingredient extends Model
 {
     protected $fillable = [
-        'filemaker_id', 'name', 'unit', 'package_quantity', 'unit_cost',
+        'filemaker_id', 'code', 'name', 'category', 'unit', 'package_quantity', 'unit_cost',
         'cost_date', 'notes', 'available_for_bar',
     ];
 
@@ -26,5 +26,11 @@ class Ingredient extends Model
     public function recipeStepIngredients(): HasMany
     {
         return $this->hasMany(RecipeStepIngredient::class);
+    }
+
+    /** @return HasMany<SupplierPrice, $this> */
+    public function supplierPrices(): HasMany
+    {
+        return $this->hasMany(SupplierPrice::class)->orderByDesc('is_current')->orderByDesc('valid_from');
     }
 }

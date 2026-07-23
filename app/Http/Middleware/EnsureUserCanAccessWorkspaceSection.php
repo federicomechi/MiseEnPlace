@@ -12,6 +12,10 @@ class EnsureUserCanAccessWorkspaceSection
     {
         $section = (string) $request->route('section');
 
+        if ($section === '' && $request->is('operativita/ingredients*')) {
+            $section = 'ingredients';
+        }
+
         abort_unless(
             $request->user()?->hasAdministrativeAccess()
                 || in_array($section, $request->user()?->permittedWorkspaceSections() ?? [], true),
