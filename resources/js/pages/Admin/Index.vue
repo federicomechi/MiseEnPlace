@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 
 const areas = [
     {
@@ -23,7 +23,7 @@ const areas = [
     {
         group: 'Sistema',
         items: [
-            { icon: '♙', title: 'Utenti e permessi', text: 'Accessi, ruoli e autorizzazioni operative.', tone: 'bg-[#e5edf1] text-[#476774]' },
+            { icon: '♙', title: 'Utenti e permessi', text: 'Accessi, ruoli e autorizzazioni operative.', tone: 'bg-[#e5edf1] text-[#476774]', href: '/admin/users' },
             { icon: '⇩', title: 'Importazione dati', text: 'Passaggio controllato dei dati da FileMaker.', tone: 'bg-[#edf0dc] text-[#68773d]' },
             { icon: '▣', title: 'Impostazioni', text: 'Preferenze dell’applicazione e valori condivisi.', tone: 'bg-[#eeeeea] text-[#60645e]' },
         ],
@@ -64,9 +64,8 @@ defineOptions({
                     <div :class="['grid h-11 w-11 place-items-center rounded-xl text-lg', item.tone]">{{ item.icon }}</div>
                     <h3 class="mt-5 text-base font-bold text-foreground">{{ item.title }}</h3>
                     <p class="mt-2 min-h-10 text-sm leading-5 text-muted-foreground">{{ item.text }}</p>
-                    <button type="button" class="mt-5 text-xs font-bold uppercase tracking-[0.12em] text-[#55714e] transition group-hover:text-[#284a38]">
-                        Configura →
-                    </button>
+                    <Link v-if="item.href" :href="item.href" class="mt-5 inline-block text-xs font-bold uppercase tracking-[0.12em] text-[#55714e] transition group-hover:text-[#284a38]">Gestisci →</Link>
+                    <span v-else class="mt-5 inline-block text-xs font-bold uppercase tracking-[0.12em] text-[#91a094]">In arrivo</span>
                 </article>
             </div>
         </section>

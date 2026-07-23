@@ -1,0 +1,124 @@
+<script setup lang="ts">
+import { Head, router, useForm, usePage } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import InputError from '@/components/InputError.vue';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+type User = {
+    id: number;
+    name: string;
+    email: string;
+    email_verified_at: string | null;
+    is_admin: boolean;
+    created_at: string;
+};
+
+const props = defineProps<{ users: User[] }>();
+const page = usePage();
+const currentUserId = computed(() => page.props.auth.user.id);
+const editingId = ref<number | null>(null);
+
+const createForm = useForm({
+    name: '',
+    email: '',
+    password: '',
+    is_admin: false,
+});
+
+const editForm = useForm({
+    name: '',
+    email: '',
+    password: '',
+    is_admin: false,
+});
+
+function createUser(): void {
+    createForm.post('/admin/users', {
+        preserveScroll: true,
+        onSuccess: () => createForm.reset(),
+    });
+}
+
+function startEditing(user: User): void {
+    editingId.value = user.id;
+    editForm.name = user.name;
+    editForm.email = user.email;
+    editForm.password = '';
+    editForm.is_admin = user.is_admin;
+    editForm.clearErrors();
+}
+
+function updateUser(user: User): void {
+    editForm.put(`/admin/users/${user.id}`, {
+        preserveScroll: true,
+        onSuccess: () => {
+            editingId.value = null;
+            editForm.reset();
+        },
+    });
+}
+
+function deleteUser(user: User): void {
+    if (window.confirm(`Eliminare definitivamente l'utente ${user.name}?`)) {
+        router.delete(`/admin/users/${user.id}`, { preserveScroll: true });
+    }
+}
+
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Amministrazione', href: '/admin' },
+            { title: 'Utenti e permessi', href: '/admin/users' },
+        ],
+    },
+});
+</script>
+
+<template>
+    <Head title="Utenti e permessi" />
+
+    <div class="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-7 p-4 md:p-8">
+        <section class="rounded-3xl bg-[#284a38] px-6 py-7 text-[#f8f4ea] md:px-8">
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-[#c7ddc2]">Amministrazione</p>
+            <h1 class="mt-2 font-serif text-4xl tracking-tight">Utenti e permessi</h1>
+            <p class="mt-3 max-w-2xl text-sm leading-6 text-[#d7e5d3]">Crea gli accessi al sistema e assegna il ruolo amministratore solo alle persone che devono gestire configurazione e dati.</p>
+        </section>
+
+        <div class="grid gap-7 xl:grid-cols-[minmax(0,1fr)_22rem]">
+            <section class="rounded-2xl border border-border bg-card shadow-sm">
+                <div class="flex items-center justify-between border-b border-border px-5 py-4">
+                    <div><h2 class="font-serif text-2xl">Account</h2><p class="text-sm text-muted-foreground">{{ users.length }} utenti registrati</p></div>
+                </div>
+                <div v-if="users.length === 0" class="p-8 text-center text-muted-foreground">Nessun utente presente.</div>
+                <div v-else class="divide-y divide-border">
+                    <article v-for="user in users" :key="user.id" class="p-5">
+                        <template v-if="editingId === user.id">
+                            <form class="grid gap-4" @submit.prevent="updateUser(user)">
+                                <div class="grid gap-4 sm:grid-cols-2"><div><Label :for="`name-${user.id}`">Nome</Label><Input :id="`name-${user.id}`" v-model="editForm.name" class="mt-2" required /><InputError :message="editForm.errors.name" /></div><div><Label :for="`email-${user.id}`">Email</Label><Input :id="`email-${user.id}`" v-model="editForm.email" class="mt-2" type="email" required /><InputError :message="editForm.errors.email" /></div></div>
+                                <div><Label :for="`password-${user.id}`">Nuova password</Label><Input :id="`password-${user.id}`" v-model="editForm.password" class="mt-2" type="password" placeholder="Lascia vuoto per non modificarla" /><InputError :message="editForm.errors.password" /></div>
+                                <label class="flex items-center gap-3 text-sm font-medium"><input v-model="editForm.is_admin" type="checkbox" class="h-4 w-4 accent-[#284a38]" :disabled="user.id === currentUserId" /> Amministratore <span v-if="user.id === currentUserId" class="font-normal text-muted-foreground">(il tuo ruolo non può essere revocato)</span></label>
+                                <InputError :message="editForm.errors.is_admin" />
+                                <div class="flex gap-3"><button type="submit" :disabled="editForm.processing" class="rounded-xl bg-[#284a38] px-4 py-2 text-sm font-semibold text-white">Salva</button><button type="button" class="rounded-xl border border-border px-4 py-2 text-sm font-semibold" @click="editingId = null">Annulla</button></div>
+                            </form>
+                        </template>
+                        <template v-else>
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div class="flex min-w-0 items-center gap-3"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#e7f0e6] font-serif text-lg text-[#476246]">{{ user.name.slice(0, 1).toUpperCase() }}</span><div class="min-w-0"><div class="flex flex-wrap items-center gap-2"><h3 class="font-bold">{{ user.name }}</h3><span v-if="user.is_admin" class="rounded-full bg-[#e5edf1] px-2 py-0.5 text-[11px] font-bold text-[#476774]">ADMIN</span></div><p class="truncate text-sm text-muted-foreground">{{ user.email }}</p></div></div><div class="flex gap-2"><button type="button" class="rounded-lg border border-border px-3 py-2 text-sm font-semibold hover:bg-muted" @click="startEditing(user)">Modifica</button><button v-if="user.id !== currentUserId" type="button" class="rounded-lg px-3 py-2 text-sm font-semibold text-destructive hover:bg-destructive/10" @click="deleteUser(user)">Elimina</button></div></div>
+                        </template>
+                    </article>
+                </div>
+            </section>
+
+            <aside class="h-fit rounded-2xl border border-border bg-card p-5 shadow-sm">
+                <h2 class="font-serif text-2xl">Nuovo utente</h2><p class="mt-1 text-sm text-muted-foreground">L'account sarà subito attivo.</p>
+                <form class="mt-5 grid gap-4" @submit.prevent="createUser">
+                    <div><Label for="new-name">Nome</Label><Input id="new-name" v-model="createForm.name" class="mt-2" required autocomplete="name" /><InputError :message="createForm.errors.name" /></div>
+                    <div><Label for="new-email">Email</Label><Input id="new-email" v-model="createForm.email" class="mt-2" type="email" required autocomplete="email" /><InputError :message="createForm.errors.email" /></div>
+                    <div><Label for="new-password">Password</Label><Input id="new-password" v-model="createForm.password" class="mt-2" type="password" required minlength="8" autocomplete="new-password" /><p class="mt-1 text-xs text-muted-foreground">Almeno 8 caratteri.</p><InputError :message="createForm.errors.password" /></div>
+                    <label class="flex items-center gap-3 text-sm font-medium"><input v-model="createForm.is_admin" type="checkbox" class="h-4 w-4 accent-[#284a38]" /> Concedi privilegi amministrativi</label>
+                    <button type="submit" :disabled="createForm.processing" class="rounded-xl bg-[#284a38] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#1b3829] disabled:opacity-50">Crea utente</button>
+                </form>
+            </aside>
+        </div>
+    </div>
+</template>
