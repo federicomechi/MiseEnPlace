@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
@@ -63,11 +63,6 @@ function submit(): void {
         form.post('/operativita/recipes');
     }
 }
-function remove(): void {
-    if (props.recipe && window.confirm('Eliminare questa ricetta?')) {
-        router.delete('/operativita/recipes/' + props.recipe.id);
-    }
-}
 defineOptions({
     layout: {
         breadcrumbs: [
@@ -95,13 +90,14 @@ defineOptions({
                     }}
                 </p>
             </div>
-            <Button
-                v-if="recipe"
-                label="Elimina"
-                severity="danger"
-                text
-                @click="remove"
-            />
+                <Button
+                    v-if="recipe"
+                    label="Modifica"
+                    severity="secondary"
+                    outlined
+                    disabled
+                    title="Pagina di modifica avanzata in definizione"
+                />
         </header>
         <form
             class="grid gap-4 rounded-xl border border-border bg-card p-4 shadow-sm"
