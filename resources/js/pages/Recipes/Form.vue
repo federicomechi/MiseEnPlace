@@ -108,15 +108,17 @@ defineOptions({
             @submit.prevent="submit"
         >
             <div class="grid gap-4 md:grid-cols-2">
+                <template v-if="!recipe">
+                    <label class="grid gap-1 text-sm font-medium"
+                        >Nome<InputText v-model="form.name" /><small
+                            v-if="form.errors.name"
+                            class="text-destructive"
+                            >{{ form.errors.name }}</small
+                        ></label
+                    ><label class="grid gap-1 text-sm font-medium"
+                        >Nome stampa<InputText v-model="form.print_name" /></label
+                ></template>
                 <label class="grid gap-1 text-sm font-medium"
-                    >Nome<InputText v-model="form.name" /><small
-                        v-if="form.errors.name"
-                        class="text-destructive"
-                        >{{ form.errors.name }}</small
-                    ></label
-                ><label class="grid gap-1 text-sm font-medium"
-                    >Nome stampa<InputText v-model="form.print_name" /></label
-                ><label class="grid gap-1 text-sm font-medium"
                     >Tag<InputText
                         v-model="form.tag"
                         placeholder="es. base, dessert" /></label
