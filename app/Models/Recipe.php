@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\BelongsToClient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Recipe extends Model
 {
@@ -30,5 +31,11 @@ class Recipe extends Model
     public function steps(): HasMany
     {
         return $this->hasMany(RecipeStep::class)->orderBy('sort_order');
+    }
+
+    /** @return HasManyThrough<RecipeStepIngredient, RecipeStep, $this> */
+    public function stepIngredients(): HasManyThrough
+    {
+        return $this->hasManyThrough(RecipeStepIngredient::class, RecipeStep::class);
     }
 }

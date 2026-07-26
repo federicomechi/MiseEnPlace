@@ -14,7 +14,7 @@ class RecipeController extends Controller
     {
         $search = $request->string('search')->trim()->value();
         $recipes = Recipe::query()
-            ->withCount('steps')
+            ->withCount(['steps', 'stepIngredients'])
             ->when($search, fn ($query) => $query->where(function ($query) use ($search): void {
                 $query->where('name', 'like', "%{$search}%")
                     ->orWhere('tag', 'like', "%{$search}%")
