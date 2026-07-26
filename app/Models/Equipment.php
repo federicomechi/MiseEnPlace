@@ -9,7 +9,7 @@ class Equipment extends Model
 {
     use BelongsToClient;
 
-    protected $fillable = ['client_id', 'name', 'category', 'description', 'is_active'];
+    protected $fillable = ['client_id', 'filemaker_id', 'name', 'code', 'category', 'description', 'is_active'];
 
     protected function casts(): array
     {

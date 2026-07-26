@@ -20,7 +20,9 @@ class ReferenceCatalogController extends Controller
         $model = $this->model($section);
         $search = $request->string('search')->trim()->value();
         $items = $model::query()->when($search, fn ($query) => $query->where(function ($query) use ($search): void {
-            $query->where('name', 'like', "%{$search}%")->orWhere('category', 'like', "%{$search}%");
+            $query->where('name', 'like', "%{$search}%")
+                ->orWhere('code', 'like', "%{$search}%")
+                ->orWhere('category', 'like', "%{$search}%");
         }))->orderBy('name')->get();
 
         return Inertia::render('ReferenceCatalog/Index', ['section' => $section, 'title' => $section === 'allergens' ? 'Allergeni' : 'Attrezzature e supporti', 'items' => $items, 'search' => $search]);
